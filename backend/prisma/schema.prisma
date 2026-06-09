@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                Int               @id @default(autoincrement())
+  name              String
+  email             String            @unique
+  password          String
+  role              String            @default("user")
+  verified          Boolean           @default(false)
+  verificationToken String?
+  createdAt         DateTime          @default(now())
+  passwordResets    PasswordReset[]
+  refreshTokens     RefreshToken[]
+  employeeProfiles  EmployeeProfile[]
+  approvalHistory   ApprovalHistory[] @relation("ApproverHistory")
+
+  @@map("users")
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
+}
+
+model RefreshToken {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  token  String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Department {
+  id               Int               @id @default(autoincrement())
+  department_name  String            @db.VarChar(100)
+  employeeProfiles EmployeeProfile[]
+
+  @@map("departments")
+}
+
+model EmployeeProfile {
+  id                Int                @id @default(autoincrement())
+  userId            Int?               @map("user_id")
+  departmentId      Int?               @map("department_id")
+  phone             String?            @db.VarChar(20)
+  address           String?            @db.Text
+  designation       String?            @db.VarChar(100)
+  salary            Decimal?           @db.Decimal(10, 2)
+  createdAt         DateTime           @default(now()) @map("created_at")
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  department        Department?        @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  images            EmployeeImage[]
+  employeeSkills    EmployeeSkill[]
+  leaveRequests     LeaveRequest[]
+  assetAllocations  AssetAllocation[]
+  leaveApplications LeaveApplication[]
+  leaveBalances     LeaveBalance[]
+
+  @@map("employee_profiles")
+}
+
+model EmployeeImage {
+  id              Int             @id @default(autoincrement())
+  employeeId      Int             @map("employee_id")
+  imageUrl        String          @map("image_url") @db.Text
+  employeeProfile EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("employee_images")
+}
+
+model Skill {
+  id             Int             @id @default(autoincrement())
+  skill_name     String          @db.VarChar(100)
+  employeeSkills EmployeeSkill[]
+
+  @@map("skills")
+}
+
+model EmployeeSkill {
+  id              Int             @id @default(autoincrement())
+  employeeId      Int             @map("employee_id")
+  skillId         Int             @map("skill_id")
+  employeeProfile EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skill           Skill           @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@map("employee_skills")
+}
+
+// ─── Old Leave System (kept for backward compatibility) ────────────────────
+model LeaveRequest {
+  id                Int             @id @default(autoincrement())
+  employeeProfileId Int             @map("employee_profile_id")
+  leaveType         String          @map("leave_type") @db.VarChar(50)
+  startDate         DateTime        @map("start_date")
+  endDate           DateTime        @map("end_date")
+  reason            String          @db.Text
+  status            String          @default("pending") @db.VarChar(20)
+  rejectionReason   String?         @map("rejection_reason") @db.Text
+  createdAt         DateTime        @default(now()) @map("created_at")
+  employeeProfile   EmployeeProfile @relation(fields: [employeeProfileId], references: [id], onDelete: Cascade)
+
+  @@map("leave_requests")
+}
+
+// ─── New Leave System (normalized for SQL JOIN practice) ───────────────────
+model LeaveType {
+  id                Int                @id @default(autoincrement())
+  leave_name        String             @db.VarChar(100)
+  total_days        Int
+  leaveBalances     LeaveBalance[]
+  leaveApplications LeaveApplication[]
+
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id              Int             @id @default(autoincrement())
+  employeeId      Int             @map("employee_id")
+  leaveTypeId     Int             @map("leave_type_id")
+  available_days  Int
+  employeeProfile EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType       LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
+
+  @@map("leave_balance")
+}
+
+model LeaveApplication {
+  id              Int               @id @default(autoincrement())
+  employeeId      Int               @map("employee_id")
+  leaveTypeId     Int               @map("leave_type_id")
+  from_date       DateTime          @db.Date
+  to_date         DateTime          @db.Date
+  total_days      Int
+  reason          String            @db.Text
+  status          String            @default("Pending") @db.VarChar(20)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  employeeProfile EmployeeProfile   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType       LeaveType         @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
+  approvalHistory ApprovalHistory[]
+
+  @@map("leave_applications")
+}
+
+model ApprovalHistory {
+  id         Int              @id @default(autoincrement())
+  leaveId    Int              @map("leave_id")
+  approvedBy Int              @map("approved_by")
+  action     String           @db.VarChar(50)
+  remarks    String?          @db.Text
+  createdAt  DateTime         @default(now()) @map("created_at")
+  leave      LeaveApplication @relation(fields: [leaveId], references: [id], onDelete: Cascade)
+  approver   User             @relation("ApproverHistory", fields: [approvedBy], references: [id], onDelete: Cascade)
+
+  @@map("approval_history")
+}
+
+// ─── Asset Management ──────────────────────────────────────────────────────
+model Asset {
+  id           Int               @id @default(autoincrement())
+  assetCode    String            @map("asset_code") @db.VarChar(50)
+  assetName    String            @map("asset_name") @db.VarChar(200)
+  assetType    String            @map("asset_type") @db.VarChar(100)
+  purchaseDate DateTime          @map("purchase_date") @db.Date
+  purchaseCost Decimal           @map("purchase_cost") @db.Decimal(12, 2)
+  status       String            @map("status") @db.VarChar(50)
+  allocations  AssetAllocation[]
+  history      AssetHistory[]
+
+  @@map("assets")
+}
+
+model AssetAllocation {
+  id            Int             @id @default(autoincrement())
+  assetId       Int             @map("asset_id")
+  employeeId    Int             @map("employee_id")
+  allocatedBy   Int             @map("allocated_by")
+  allocatedDate DateTime        @map("allocated_date") @db.Date
+  returnDate    DateTime?       @map("return_date") @db.Date
+  status        String          @map("status") @db.VarChar(50)
+  asset         Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("asset_allocations")
+}
+
+model AssetHistory {
+  id        Int      @id @default(autoincrement())
+  assetId   Int      @map("asset_id")
+  action    String   @db.VarChar(100)
+  remarks   String?  @db.Text
+  createdBy Int      @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("asset_history")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  title     String   @db.VarChar(200)
+  message   String   @db.Text
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  tableName   String   @map("table_name") @db.VarChar(100)
+  actionType  String   @map("action_type") @db.VarChar(50)
+  recordId    Int      @map("record_id")
+  oldData     Json?    @map("old_data") @db.JsonB
+  newData     Json?    @map("new_data") @db.JsonB
+  performedBy Int?     @map("performed_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
