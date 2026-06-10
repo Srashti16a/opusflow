@@ -14,16 +14,37 @@ const leaveRoutes = require("./src/routes/leave");
 const assetRoutes = require("./src/routes/asset");
 const notificationRoutes = require("./src/routes/notification");
 const auditRoutes = require("./src/routes/audit");
+const healthRoutes = require("./src/routes/health");
+
+const { trafficTracker } = require("./src/middleware/trafficTracker");
+
+// Start background cron jobs
+require("./src/jobs/cronJobs");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(trafficTracker);
 
 // Serve uploaded images statically
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+// Versioned health routes (/api/v1/health and /api/v2/health)
+app.use("/api", healthRoutes);
+
+// Versioned v1 API Routes
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/departments", departmentRoutes);
+app.use("/api/v1/skills", skillRoutes);
+app.use("/api/v1/employees", employeeRoutes);
+app.use("/api/v1/leaves", leaveRoutes);
+app.use("/api/v1/assets", assetRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/audit-logs", auditRoutes);
+
+// Backward Compatibility Aliases (/api/ -> /api/v1/)
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/departments", departmentRoutes);
@@ -42,8 +63,12 @@ app.get("/", (req, res) => {
 // Error handling middleware (must be registered after all routes)
 app.use(errorHandler);
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+// Start server if not in test environment
+if (process.env.NODE_ENV !== "test") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

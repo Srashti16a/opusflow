@@ -2,12 +2,18 @@ const express = require("express");
 const router = express.Router();
 const prisma = require("../config/db");
 const verifyToken = require("../middleware/auth");
+const cache = require("../config/cache");
 
 router.get("/", verifyToken, async (req, res, next) => {
   try {
-    const departments = await prisma.department.findMany({
-      orderBy: { department_name: "asc" }
-    });
+    const cacheKey = "departments:all";
+    let departments = cache.get(cacheKey);
+    if (!departments) {
+      departments = await prisma.department.findMany({
+        orderBy: { department_name: "asc" }
+      });
+      cache.set(cacheKey, departments);
+    }
     res.json(departments);
   } catch (err) {
     next(err);
@@ -32,6 +38,9 @@ router.post("/", verifyToken, async (req, res, next) => {
     const newDept = await prisma.department.create({
       data: { department_name: department_name.trim() }
     });
+
+    // Invalidate the cache
+    cache.del("departments:all");
 
     res.status(201).json({
       message: "Department created successfully",

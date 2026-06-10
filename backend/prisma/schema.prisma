@@ -68,6 +68,8 @@ model EmployeeProfile {
   leaveApplications LeaveApplication[]
   leaveBalances     LeaveBalance[]
 
+  @@index([userId])
+  @@index([departmentId])
   @@map("employee_profiles")
 }
 
@@ -150,6 +152,9 @@ model LeaveApplication {
   leaveType       LeaveType         @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
   approvalHistory ApprovalHistory[]
 
+  @@index([employeeId])
+  @@index([leaveTypeId])
+  @@index([status])
   @@map("leave_applications")
 }
 
@@ -178,6 +183,8 @@ model Asset {
   allocations  AssetAllocation[]
   history      AssetHistory[]
 
+  @@index([assetCode])
+  @@index([status])
   @@map("assets")
 }
 
@@ -192,6 +199,8 @@ model AssetAllocation {
   asset         Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
   employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
+  @@index([assetId])
+  @@index([employeeId])
   @@map("asset_allocations")
 }
 
@@ -215,6 +224,8 @@ model Notification {
   isRead    Boolean  @default(false) @map("is_read")
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([userId])
+  @@index([isRead])
   @@map("notifications")
 }
 
@@ -228,5 +239,7 @@ model AuditLog {
   performedBy Int?     @map("performed_by")
   createdAt   DateTime @default(now()) @map("created_at")
 
+  @@index([tableName])
+  @@index([actionType])
   @@map("audit_logs")
 }

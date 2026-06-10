@@ -2,17 +2,31 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const uploadDir = path.resolve(__dirname, "../../../uploads");
+const baseUploadDir = path.resolve(__dirname, "../../../uploads");
 
-// Ensure upload directory exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure base upload directory exists
+if (!fs.existsSync(baseUploadDir)) {
+  fs.mkdirSync(baseUploadDir, { recursive: true });
 }
 
 // Storage Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir);
+    // Determine subdirectory based on query parameter or body parameter, fallback to 'employees'
+    const subfolder = req.query.folder || req.body.folder || "employees";
+    
+    // Whitelist subfolders for security
+    const allowedSubfolders = ["employees", "documents", "certificates", "assets"];
+    const folder = allowedSubfolders.includes(subfolder) ? subfolder : "employees";
+    
+    const targetDir = path.join(baseUploadDir, folder);
+    
+    // Ensure target subdirectory exists
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    
+    cb(null, targetDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -20,16 +34,16 @@ const storage = multer.diskStorage({
   }
 });
 
-// File Type Filter
+// File Type Filter (supports images and standard enterprise documents)
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const allowedExtensions = /jpeg|jpg|png|gif|webp|pdf|doc|docx/;
+  const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedExtensions.test(file.mimetype);
 
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb(new Error("Only images (jpeg, jpg, png, gif, webp) are allowed!"));
+    cb(new Error("Only images (jpeg, jpg, png, gif, webp) and documents (pdf, doc, docx) are allowed!"));
   }
 };
 

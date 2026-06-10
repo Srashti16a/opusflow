@@ -1,5 +1,6 @@
 const EmployeeService = require("../services/EmployeeService");
 const upload = require("../config/multer");
+const path = require("path");
 
 class EmployeeController {
   async getProfileById(req, res, next) {
@@ -105,7 +106,10 @@ class EmployeeController {
       if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "No files uploaded" });
       }
-      const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+      const imageUrls = req.files.map(file => {
+        const folderName = path.basename(file.destination);
+        return `/uploads/${folderName}/${file.filename}`;
+      });
       res.json({ imageUrls });
     });
   }
