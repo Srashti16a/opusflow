@@ -11,11 +11,11 @@ if (process.env.NODE_ENV !== "test") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const activeLeaves = await prisma.leaveRequest.findMany({
+      const activeLeaves = await prisma.leaveApplication.findMany({
         where: {
-          status: "approved",
-          startDate: { lte: today },
-          endDate: { gte: today }
+          status: "Approved",
+          from_date: { lte: today },
+          to_date: { gte: today }
         },
         include: {
           employeeProfile: {
@@ -26,8 +26,8 @@ if (process.env.NODE_ENV !== "test") {
         }
       });
 
-      const pendingLeaves = await prisma.leaveRequest.count({
-        where: { status: "pending" }
+      const pendingLeaves = await prisma.leaveApplication.count({
+        where: { status: "Pending" }
       });
 
       logger.info(`[DAILY LEAVE REPORT] Date: ${today.toDateString()}

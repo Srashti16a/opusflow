@@ -61,7 +61,7 @@ class LeaveService {
       throw error;
     }
 
-    const newRequest = await LeaveRepository.updateStatus(id, "approved");
+    const newRequest = await LeaveRepository.updateStatus(id, "approved", null, performedBy);
 
     // Audit log
     await AuditService.logAction(
@@ -93,7 +93,7 @@ class LeaveService {
       throw error;
     }
 
-    const newRequest = await LeaveRepository.updateStatus(id, "rejected", rejectionReason);
+    const newRequest = await LeaveRepository.updateStatus(id, "rejected", rejectionReason, performedBy);
 
     // Audit log
     await AuditService.logAction(

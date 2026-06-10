@@ -3,6 +3,12 @@ const prisma = require("../config/db");
 async function main() {
   console.log("Setting up database view and stored functions...");
 
+  console.log("Dropping existing views if any...");
+  await prisma.$executeRawUnsafe(`DROP VIEW IF EXISTS employee_summary CASCADE;`);
+  await prisma.$executeRawUnsafe(`DROP VIEW IF EXISTS employee_dashboard_view CASCADE;`);
+  await prisma.$executeRawUnsafe(`DROP VIEW IF EXISTS leave_summary_view CASCADE;`);
+  await prisma.$executeRawUnsafe(`DROP VIEW IF EXISTS asset_summary_view CASCADE;`);
+
   // 1. Create View: employee_summary
   console.log("Creating SQL view: employee_summary...");
   await prisma.$executeRawUnsafe(`
@@ -30,8 +36,8 @@ async function main() {
       ep.salary,
       (
         SELECT COUNT(*)::INTEGER 
-        FROM leave_requests lr 
-        WHERE lr.employee_profile_id = ep.id AND lr.status = 'approved'
+        FROM leave_applications la 
+        WHERE la.employee_id = ep.id AND la.status = 'Approved'
       ) AS approved_leaves_count,
       (
         SELECT COUNT(*)::INTEGER 
@@ -49,18 +55,19 @@ async function main() {
   await prisma.$executeRawUnsafe(`
     CREATE OR REPLACE VIEW leave_summary_view AS
     SELECT
-      lr.id AS leave_id,
+      la.id AS leave_id,
       u.name AS employee_name,
       d.department_name,
-      lr.leave_type,
-      lr.start_date,
-      lr.end_date,
-      (lr.end_date - lr.start_date + interval '1 day') AS leave_duration,
-      lr.status,
-      lr.reason,
-      lr.created_at
-    FROM leave_requests lr
-    JOIN employee_profiles ep ON lr.employee_profile_id = ep.id
+      lt.leave_name AS leave_type,
+      la.from_date AS start_date,
+      la.to_date AS end_date,
+      la.total_days AS leave_duration,
+      la.status,
+      la.reason,
+      la.created_at
+    FROM leave_applications la
+    JOIN leave_types lt ON la.leave_type_id = lt.id
+    JOIN employee_profiles ep ON la.employee_id = ep.id
     LEFT JOIN users u ON ep.user_id = u.id
     LEFT JOIN departments d ON ep.department_id = d.id;
   `);
@@ -94,15 +101,24 @@ async function main() {
     RETURNS INTEGER AS $$
     DECLARE
       total_days INTEGER;
-      allowed_leaves INTEGER := 30; -- standard maximum leaves
+      allowed_leaves INTEGER;
       taken_leaves INTEGER;
     BEGIN
-      SELECT COALESCE(SUM(EXTRACT(DAY FROM (end_date - start_date)) + 1), 0)::INTEGER
+      SELECT COALESCE(total_days, 30) INTO allowed_leaves
+      FROM leave_types
+      WHERE leave_name = type_of_leave;
+
+      IF allowed_leaves IS NULL THEN
+        allowed_leaves := 30;
+      END IF;
+
+      SELECT COALESCE(SUM(la.total_days), 0)::INTEGER
       INTO taken_leaves
-      FROM leave_requests
-      WHERE employee_profile_id = emp_profile_id
-        AND leave_type = type_of_leave
-        AND status = 'approved';
+      FROM leave_applications la
+      JOIN leave_types lt ON la.leave_type_id = lt.id
+      WHERE la.employee_id = emp_profile_id
+        AND lt.leave_name = type_of_leave
+        AND la.status = 'Approved';
 
       total_days := allowed_leaves - taken_leaves;
       RETURN total_days;

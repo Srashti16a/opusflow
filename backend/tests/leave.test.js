@@ -3,26 +3,38 @@ const app = require("../server");
 const prisma = require("../src/config/db");
 const jwt = require("jsonwebtoken");
 
-jest.mock("../src/config/db", () => ({
-  leaveRequest: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    count: jest.fn()
-  },
-  employeeProfile: {
-    findUnique: jest.fn(),
-    findFirst: jest.fn()
-  },
-  $queryRawUnsafe: jest.fn(),
-  auditLog: {
-    create: jest.fn()
-  },
-  notification: {
-    create: jest.fn()
-  }
-}));
+jest.mock("../src/config/db", () => {
+  const mockDb = {
+    leaveApplication: {
+      create: jest.fn(),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      count: jest.fn()
+    },
+    leaveType: {
+      findFirst: jest.fn(),
+      create: jest.fn()
+    },
+    employeeProfile: {
+      findUnique: jest.fn(),
+      findFirst: jest.fn()
+    },
+    approvalHistory: {
+      create: jest.fn()
+    },
+    $queryRawUnsafe: jest.fn(),
+    $transaction: jest.fn(),
+    auditLog: {
+      create: jest.fn()
+    },
+    notification: {
+      create: jest.fn()
+    }
+  };
+  mockDb.$transaction.mockImplementation((cb) => cb(mockDb));
+  return mockDb;
+});
 
 const secret = process.env.JWT_SECRET || "mysecretkey";
 const mockToken = jwt.sign({ id: 1, role: "user" }, secret);
@@ -51,14 +63,17 @@ describe("Leave Request Endpoints", () => {
     it("should successfully apply for a leave with valid fields", async () => {
       prisma.employeeProfile.findFirst.mockResolvedValue({ id: 10, userId: 1 });
       prisma.$queryRawUnsafe.mockResolvedValue([{ balance: 30 }]);
-      prisma.leaveRequest.create.mockResolvedValue({
+      prisma.leaveType.findFirst.mockResolvedValue({ id: 1, leave_name: "Casual Leave", total_days: 12 });
+      prisma.leaveApplication.create.mockResolvedValue({
         id: 1,
-        employeeProfileId: 10,
-        leaveType: "Casual Leave",
-        startDate: new Date("2026-06-15"),
-        endDate: new Date("2026-06-20"),
+        employeeId: 10,
+        leaveTypeId: 1,
+        from_date: new Date("2026-06-15"),
+        to_date: new Date("2026-06-20"),
+        total_days: 6,
         reason: "Family vacation",
-        status: "pending"
+        status: "Pending",
+        leaveType: { id: 1, leave_name: "Casual Leave", total_days: 12 }
       });
       prisma.auditLog.create.mockResolvedValue({});
 
