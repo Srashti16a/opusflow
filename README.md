@@ -75,7 +75,7 @@ A unified enterprise workflow management portal built to streamline employee pro
 
 ## Deployment URLs
 
-- **Live Frontend URL:** `https://frontend-srashti16as-projects.vercel.app`
+- **Live Frontend URL:** `https://eventhub360-srashti.vercel.app`
 - **Live Backend API URL:** `https://eventhub360-kbam.onrender.com`
 - **Cloud Database:** Hosted on Neon PostgreSQL.
 
