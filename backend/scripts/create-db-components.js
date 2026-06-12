@@ -100,7 +100,7 @@ async function main() {
     CREATE OR REPLACE FUNCTION calculate_leave_balance(emp_profile_id INT, type_of_leave VARCHAR)
     RETURNS INTEGER AS $$
     DECLARE
-      total_days INTEGER;
+      remaining_leaves INTEGER;
       allowed_leaves INTEGER;
       taken_leaves INTEGER;
     BEGIN
@@ -120,8 +120,8 @@ async function main() {
         AND lt.leave_name = type_of_leave
         AND la.status = 'Approved';
 
-      total_days := allowed_leaves - taken_leaves;
-      RETURN total_days;
+      remaining_leaves := allowed_leaves - taken_leaves;
+      RETURN remaining_leaves;
     END;
     $$ LANGUAGE plpgsql;
   `);
