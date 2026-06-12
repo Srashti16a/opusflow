@@ -23,7 +23,21 @@ require("./src/jobs/cronJobs");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://employee-management.vercel.app",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || process.env.NODE_ENV !== "production") return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("CORS policy violation"), false);
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(trafficTracker);
 

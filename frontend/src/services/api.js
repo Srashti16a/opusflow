@@ -1,11 +1,17 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL,
   headers: {
     "Content-Type": "application/json"
   }
 });
+
+export const getBackendURL = () => {
+  return baseURL.replace(/\/api$/, "");
+};
 
 // Request Interceptor: Attach JWT access token to Authorization header if present
 api.interceptors.request.use(
@@ -49,7 +55,7 @@ api.interceptors.response.use(
 
       try {
         // Try to obtain a new access token
-        const res = await axios.post("http://localhost:5000/api/auth/refresh-token", {
+        const res = await axios.post(`${baseURL}/auth/refresh-token`, {
           refreshToken
         });
 
@@ -76,8 +82,8 @@ function handleLogout() {
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
   // Force redirect to login page
-  if (window.location.pathname !== "/") {
-    window.location.href = "/";
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
   }
 }
 

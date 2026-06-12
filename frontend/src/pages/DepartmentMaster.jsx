@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
 
 function DepartmentMaster() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { user, refreshToken } = useSelector((state) => state.auth);
   const [departments, setDepartments] = useState([]);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -52,36 +47,9 @@ function DepartmentMaster() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
-
   return (
     <div className="dashboard-layout">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">i-SOFTZONE Technologies</div>
-        <div className="navbar-user">
-          <Link to="/dashboard" style={{ color: "var(--text-secondary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-            Dashboard
-          </Link>
-          {user && (
-            <span className={`badge badge-${user.role}`}>
-              {user.role}
-            </span>
-          )}
-          <button className="btn-logout" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">

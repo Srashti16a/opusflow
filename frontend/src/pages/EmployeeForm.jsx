@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
-import api from "../services/api";
+import api, { getBackendURL } from "../services/api";
 import FormInput from "../components/FormBuilder/FormInput";
 import FormSelect from "../components/FormBuilder/FormSelect";
+import Navbar from "../components/Navbar";
 
 function EmployeeForm() {
   const { id } = useParams(); // If present, we are in EDIT mode
   const isEdit = !!id;
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { user, refreshToken } = useSelector((state) => state.auth);
 
   // Form states
   const [form, setForm] = useState({
@@ -193,39 +190,9 @@ function EmployeeForm() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
-
   return (
     <div className="dashboard-layout">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">i-SOFTZONE Technologies</div>
-        <div className="navbar-user">
-          <Link to="/dashboard" style={{ color: "var(--text-secondary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-            Dashboard
-          </Link>
-          <Link to="/employees" style={{ color: "var(--text-secondary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem", marginLeft: "1rem" }}>
-            Employee List
-          </Link>
-          {user && (
-            <span className={`badge badge-${user.role}`} style={{ marginLeft: "1rem" }}>
-              {user.role}
-            </span>
-          )}
-          <button className="btn-logout" onClick={handleLogout} style={{ marginLeft: "1rem" }}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">
@@ -367,7 +334,7 @@ function EmployeeForm() {
                     <div className="image-previews-container">
                       {form.imageUrls.map((url, idx) => (
                         <div key={idx} className="image-preview-wrapper">
-                          <img src={`http://localhost:5000${url}`} alt={`Upload preview ${idx}`} />
+                          <img src={`${getBackendURL()}${url}`} alt={`Upload preview ${idx}`} />
                           <button
                             type="button"
                             className="btn-remove-preview"

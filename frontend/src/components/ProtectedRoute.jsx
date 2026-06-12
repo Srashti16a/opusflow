@@ -6,7 +6,7 @@ function ProtectedRoute({ children, allowedRoles }) {
 
   if (!token || !user) {
     // Redirect to login if not authenticated
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {

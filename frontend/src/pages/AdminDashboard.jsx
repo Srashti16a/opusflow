@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
 
 function AdminDashboard() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { refreshToken } = useSelector((state) => state.auth);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -75,31 +70,9 @@ function AdminDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout request failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
-
   return (
     <div className="dashboard-layout">
-      {/* Navigation Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">i-SOFTZONE Technologies Admin</div>
-        <div className="navbar-user">
-          <Link to="/dashboard" style={{ color: "var(--primary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-            User Profile
-          </Link>
-          <button className="btn-logout" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">

@@ -37,7 +37,7 @@ class UserService {
     const verificationLink = `http://localhost:5173/verify/${verificationToken}`;
     console.log(`\n========================================`);
     console.log(`✉️  EMAIL SENT TO: ${email}`);
-    console.log(`Welcome to Isoft EventHub 360, ${name}!`);
+    console.log(`Welcome to eventhub360, ${name}!`);
     console.log(`Please verify your email using the link below:`);
     console.log(`${verificationLink}`);
     console.log(`========================================\n`);

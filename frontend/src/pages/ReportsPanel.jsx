@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
 import FormSelect from "../components/FormBuilder/FormSelect";
 import FormTable from "../components/FormBuilder/FormTable";
 import * as XLSX from "xlsx";
@@ -180,16 +180,6 @@ function ReportsPanel() {
     window.print();
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
 
   // Columns depending on report type
   const employeeColumns = [
@@ -247,23 +237,7 @@ function ReportsPanel() {
 
   return (
     <div className="dashboard-layout">
-      {/* Navbar (hidden in print media) */}
-      <nav className="navbar no-print">
-        <div className="navbar-brand">i-SOFTZONE Technologies</div>
-        <div className="navbar-user">
-          <Link to="/dashboard" style={{ color: "var(--text-secondary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-            Dashboard
-          </Link>
-          {user && (
-            <span className={`badge badge-${user.role}`} style={{ marginLeft: "1rem" }}>
-              {user.role}
-            </span>
-          )}
-          <button className="btn-logout" onClick={handleLogout} style={{ marginLeft: "1rem" }}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">
@@ -358,7 +332,7 @@ function ReportsPanel() {
           {/* Printable Report Wrapper */}
           <div className="print-area">
             <div style={{ display: "none" }} className="print-only">
-              <h1 style={{ color: "#000000", margin: "0 0 0.5rem 0" }}>i-SOFTZONE Technologies</h1>
+              <h1 style={{ color: "#000000", margin: "0 0 0.5rem 0" }}>eventhub360</h1>
               <h3 style={{ color: "#333333", margin: "0 0 1.5rem 0" }}>{reportType} Consolidated Report</h3>
               <p style={{ fontSize: "0.85rem", color: "#666666", marginBottom: "2rem" }}>
                 Generated on: {new Date().toLocaleString()} by {user?.name || "System Administrator"}

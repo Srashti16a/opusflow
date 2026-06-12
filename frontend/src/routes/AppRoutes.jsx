@@ -10,18 +10,19 @@ import DepartmentMaster from "../pages/DepartmentMaster";
 import SkillsMaster from "../pages/SkillsMaster";
 import EmployeeList from "../pages/EmployeeList";
 import EmployeeForm from "../pages/EmployeeForm";
-import SQLJoinsView from "../pages/SQLJoinsView";
 import LeavePanel from "../pages/LeavePanel";
 import AssetPanel from "../pages/AssetPanel";
 import ReportsPanel from "../pages/ReportsPanel";
 import AuditLogPanel from "../pages/AuditLogPanel";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Landing from "../pages/Landing";
 
 function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -82,14 +83,7 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="/joins"
-        element={
-          <ProtectedRoute>
-            <SQLJoinsView />
-          </ProtectedRoute>
-        }
-      />
+
 
       <Route
         path="/leaves"

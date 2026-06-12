@@ -33,7 +33,7 @@ function Signup() {
     <div className="auth-container">
       <div className="glass-card">
         <div style={{ fontSize: "1.75rem", fontWeight: "800", background: "linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem", fontFamily: "'Outfit', sans-serif", textAlign: "center" }}>
-          i-SOFTZONE Technologies
+          eventhub360
         </div>
         <h2 style={{ textAlign: "center", marginBottom: "0.25rem" }}>Create Account</h2>
         <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem", textAlign: "center" }}>
@@ -92,7 +92,7 @@ function Signup() {
         </form>
 
         <div className="auth-links">
-          Already have an account? <Link to="/">Log in</Link>
+          Already have an account? <Link to="/login">Log in</Link>
         </div>
       </div>
     </div>

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
 import api from "../services/api";
-import NotificationDropdown from "../components/NotificationDropdown";
+import Navbar from "../components/Navbar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -66,16 +65,6 @@ function Dashboard() {
     fetchStats();
   }, [user]);
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout request failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
 
   // Mock Trend Data for Charts
   const hiringTrendData = [
@@ -94,35 +83,14 @@ function Dashboard() {
 
   return (
     <div className="dashboard-layout">
-      {/* Navigation Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">i-SOFTZONE Technologies</div>
-        <div className="navbar-user" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          {/* Real-time Notifications */}
-          <NotificationDropdown />
-          
-          {user && user.role === "admin" && (
-            <Link to="/admin" style={{ color: "var(--primary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-              Admin Panel
-            </Link>
-          )}
-          {user && (
-            <span className={`badge badge-${user.role}`}>
-              {user.role}
-            </span>
-          )}
-          <button className="btn-logout" onClick={handleLogout} style={{ margin: 0 }}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">
         <div style={{ textAlign: "left" }}>
           <h2>Enterprise Portal Dashboard</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
-            Welcome to the i-SOFTZONE Technologies unified workflow, asset inventory, and reporting control system.
+            Welcome to the eventhub360 unified workflow, asset inventory, and reporting control system.
           </p>
 
           {/* Stats Cards Grid */}
@@ -307,13 +275,6 @@ function Dashboard() {
               </Link>
             )}
 
-            <Link to="/joins" className="nav-card">
-              <div>
-                <h3>SQL JOIN Queries</h3>
-                <p>Run and visualize database INNER JOIN statements linking users, profiles, and skills.</p>
-              </div>
-              <div className="nav-card-action">View SQL Joins &rarr;</div>
-            </Link>
           </div>
 
           {/* Profile Section */}

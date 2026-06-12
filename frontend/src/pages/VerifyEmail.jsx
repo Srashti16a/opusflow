@@ -33,7 +33,7 @@ function VerifyEmail() {
     <div className="auth-container">
       <div className="glass-card" style={{ textAlign: "center" }}>
         <div style={{ fontSize: "1.75rem", fontWeight: "800", background: "linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem", fontFamily: "'Outfit', sans-serif" }}>
-          i-SOFTZONE Technologies
+          eventhub360
         </div>
         <h2>Email Verification</h2>
         <div style={{ margin: "1.5rem 0" }}>
@@ -61,7 +61,7 @@ function VerifyEmail() {
         </div>
 
         <div className="auth-links">
-          Go to <Link to="/">Log in</Link>
+          Go to <Link to="/login">Log in</Link>
         </div>
       </div>
     </div>

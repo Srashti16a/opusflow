@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/authSlice";
-import api from "../services/api";
+import api, { getBackendURL } from "../services/api";
+import Navbar from "../components/Navbar";
 import FormTable from "../components/FormBuilder/FormTable";
 import FormInput from "../components/FormBuilder/FormInput";
 import FormSelect from "../components/FormBuilder/FormSelect";
@@ -97,16 +97,6 @@ function EmployeeList() {
     setCurrentPage(page);
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", { refreshToken });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    } finally {
-      dispatch(logout());
-      navigate("/");
-    }
-  };
 
   // Define Table Columns
   const columns = [
@@ -125,7 +115,7 @@ function EmployeeList() {
               <img
                 key={i}
                 className="employee-thumbnail"
-                src={`http://localhost:5000${img.imageUrl}`}
+                src={`${getBackendURL()}${img.imageUrl}`}
                 alt={`Document ${i}`}
                 title={`Uploaded Document ${i + 1}`}
               />
@@ -222,23 +212,7 @@ function EmployeeList() {
 
   return (
     <div className="dashboard-layout">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">i-SOFTZONE Technologies</div>
-        <div className="navbar-user">
-          <Link to="/dashboard" style={{ color: "var(--text-secondary)", fontWeight: "600", textDecoration: "none", fontSize: "0.95rem" }}>
-            Dashboard
-          </Link>
-          {user && (
-            <span className={`badge badge-${user.role}`} style={{ marginLeft: "1rem" }}>
-              {user.role}
-            </span>
-          )}
-          <button className="btn-logout" onClick={handleLogout} style={{ marginLeft: "1rem" }}>
-            Log out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main Content */}
       <main className="dashboard-content">
