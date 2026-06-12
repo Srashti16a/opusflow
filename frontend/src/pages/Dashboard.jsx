@@ -16,7 +16,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, refreshToken } = useSelector((state) => state.auth);
-  const isApprover = user && (user.role === "admin" || user.role === "manager");
+  const isApprover = user && (user.role === "admin" || user.role === "manager" || user.role === "hr");
 
   const [profile, setProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -175,7 +175,7 @@ function Dashboard() {
               {/* Pie Chart: Department Distribution */}
               <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
                 <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Department Distribution</h4>
-                <div style={{ width: "100%", height: 220, position: "relative" }}>
+                <div style={{ width: "100%", height: 300, position: "relative" }}>
                   <ResponsiveContainer>
                     <PieChart>
                       <Pie
@@ -207,10 +207,10 @@ function Dashboard() {
               {/* Bar Chart: Asset Status */}
               <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
                 <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Asset Stock Distribution</h4>
-                <div style={{ width: "100%", height: 220, position: "relative" }}>
+                <div style={{ width: "100%", height: 300, position: "relative" }}>
                   <ResponsiveContainer>
                     <BarChart data={assetDistributionData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                       <XAxis dataKey="name" stroke="var(--text-muted)" />
                       <YAxis stroke="var(--text-muted)" allowDecimals={false} />
                       <Tooltip 
@@ -229,7 +229,7 @@ function Dashboard() {
               {/* Area Chart: Hiring Trend */}
               <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
                 <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Monthly Hiring Trends</h4>
-                <div style={{ width: "100%", height: 220, position: "relative" }}>
+                <div style={{ width: "100%", height: 300, position: "relative" }}>
                   <ResponsiveContainer>
                     <AreaChart data={hiringTrendData}>
                       <defs>
@@ -238,7 +238,7 @@ function Dashboard() {
                           <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                       <XAxis dataKey="name" stroke="var(--text-muted)" />
                       <YAxis stroke="var(--text-muted)" allowDecimals={false} />
                       <Tooltip 

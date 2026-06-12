@@ -11,9 +11,9 @@ router.get("/my-requests", verifyToken, LeaveController.getMyRequests);
 router.get("/balance", verifyToken, LeaveController.getLeaveBalance);
 
 // Approver routes
-router.get("/pending", verifyToken, authorize("admin", "manager"), LeaveController.getPendingRequests);
-router.get("/history", verifyToken, authorize("admin", "manager"), LeaveController.getHistoryRequests);
-router.put("/:id/approve", verifyToken, authorize("admin", "manager"), LeaveController.approveLeave);
-router.put("/:id/reject", verifyToken, authorize("admin", "manager"), validate(rejectLeaveSchema), LeaveController.rejectLeave);
+router.get("/pending", verifyToken, authorize("admin", "manager", "hr"), LeaveController.getPendingRequests);
+router.get("/history", verifyToken, authorize("admin", "manager", "hr"), LeaveController.getHistoryRequests);
+router.put("/:id/approve", verifyToken, authorize("admin", "manager", "hr"), LeaveController.approveLeave);
+router.put("/:id/reject", verifyToken, authorize("admin", "manager", "hr"), validate(rejectLeaveSchema), LeaveController.rejectLeave);
 
 module.exports = router;

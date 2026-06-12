@@ -58,7 +58,7 @@ function AppRoutes() {
       <Route
         path="/employees"
         element={
-          <ProtectedRoute allowedRoles={["admin", "manager"]}>
+          <ProtectedRoute allowedRoles={["admin", "manager", "hr"]}>
             <EmployeeList />
           </ProtectedRoute>
         }
@@ -67,7 +67,7 @@ function AppRoutes() {
       <Route
         path="/employees/create"
         element={
-          <ProtectedRoute allowedRoles={["admin", "manager"]}>
+          <ProtectedRoute allowedRoles={["admin", "manager", "hr"]}>
             <EmployeeForm />
           </ProtectedRoute>
         }
@@ -76,7 +76,7 @@ function AppRoutes() {
       <Route
         path="/employees/edit/:id"
         element={
-          <ProtectedRoute allowedRoles={["admin", "manager"]}>
+          <ProtectedRoute allowedRoles={["admin", "manager", "hr"]}>
             <EmployeeForm />
           </ProtectedRoute>
         }

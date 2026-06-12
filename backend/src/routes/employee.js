@@ -12,10 +12,10 @@ router.get("/queries/summary-view", verifyToken, EmployeeController.getSummaryVi
 router.post("/upload", verifyToken, EmployeeController.uploadImages);
 router.get("/me", verifyToken, EmployeeController.getMyProfile);
 
-router.post("/", verifyToken, authorize("admin", "manager"), validate(employeeProfileSchema), EmployeeController.createProfile);
-router.get("/", verifyToken, authorize("admin", "manager"), EmployeeController.getAllProfiles);
-router.get("/:id", verifyToken, authorize("admin", "manager"), EmployeeController.getProfileById);
-router.put("/:id", verifyToken, authorize("admin", "manager"), validate(employeeProfileSchema), EmployeeController.updateProfile);
+router.post("/", verifyToken, authorize("admin", "manager", "hr"), validate(employeeProfileSchema), EmployeeController.createProfile);
+router.get("/", verifyToken, authorize("admin", "manager", "hr"), EmployeeController.getAllProfiles);
+router.get("/:id", verifyToken, authorize("admin", "manager", "hr"), EmployeeController.getProfileById);
+router.put("/:id", verifyToken, authorize("admin", "manager", "hr"), validate(employeeProfileSchema), EmployeeController.updateProfile);
 router.delete("/:id", verifyToken, authorize("admin"), EmployeeController.deleteProfile);
 
 module.exports = router;

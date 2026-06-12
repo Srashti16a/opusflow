@@ -10,11 +10,11 @@ router.get("/", verifyToken, AssetController.getAllAssets);
 router.get("/:id", verifyToken, AssetController.getAssetById);
 
 // Manager/Admin asset writes
-router.post("/", verifyToken, authorize("admin", "manager"), validate(createAssetSchema), AssetController.createAsset);
-router.put("/:id", verifyToken, authorize("admin", "manager"), validate(createAssetSchema), AssetController.updateAsset);
-router.delete("/:id", verifyToken, authorize("admin", "manager"), AssetController.deleteAsset);
-router.post("/:id/allocate", verifyToken, authorize("admin", "manager"), validate(allocateAssetSchema), AssetController.allocateAsset);
-router.post("/:id/return", verifyToken, authorize("admin", "manager"), AssetController.returnAsset);
-router.get("/:id/history", verifyToken, authorize("admin", "manager"), AssetController.getAssetHistory);
+router.post("/", verifyToken, authorize("admin", "manager", "hr"), validate(createAssetSchema), AssetController.createAsset);
+router.put("/:id", verifyToken, authorize("admin", "manager", "hr"), validate(createAssetSchema), AssetController.updateAsset);
+router.delete("/:id", verifyToken, authorize("admin", "manager", "hr"), AssetController.deleteAsset);
+router.post("/:id/allocate", verifyToken, authorize("admin", "manager", "hr"), validate(allocateAssetSchema), AssetController.allocateAsset);
+router.post("/:id/return", verifyToken, authorize("admin", "manager", "hr"), AssetController.returnAsset);
+router.get("/:id/history", verifyToken, authorize("admin", "manager", "hr"), AssetController.getAssetHistory);
 
 module.exports = router;
