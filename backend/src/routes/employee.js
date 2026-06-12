@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const EmployeeController = require("../controllers/EmployeeController");
 const verifyToken = require("../middleware/auth");
+const authorize = require("../middleware/authorize");
 const validate = require("../middleware/validation");
 const { employeeProfileSchema } = require("../validators/employeeValidator");
 
@@ -11,10 +12,10 @@ router.get("/queries/summary-view", verifyToken, EmployeeController.getSummaryVi
 router.post("/upload", verifyToken, EmployeeController.uploadImages);
 router.get("/me", verifyToken, EmployeeController.getMyProfile);
 
-router.post("/", verifyToken, validate(employeeProfileSchema), EmployeeController.createProfile);
-router.get("/", verifyToken, EmployeeController.getAllProfiles);
-router.get("/:id", verifyToken, EmployeeController.getProfileById);
-router.put("/:id", verifyToken, validate(employeeProfileSchema), EmployeeController.updateProfile);
-router.delete("/:id", verifyToken, EmployeeController.deleteProfile);
+router.post("/", verifyToken, authorize("admin", "manager"), validate(employeeProfileSchema), EmployeeController.createProfile);
+router.get("/", verifyToken, authorize("admin", "manager"), EmployeeController.getAllProfiles);
+router.get("/:id", verifyToken, authorize("admin", "manager"), EmployeeController.getProfileById);
+router.put("/:id", verifyToken, authorize("admin", "manager"), validate(employeeProfileSchema), EmployeeController.updateProfile);
+router.delete("/:id", verifyToken, authorize("admin"), EmployeeController.deleteProfile);
 
 module.exports = router;

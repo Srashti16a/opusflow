@@ -256,13 +256,15 @@ function Dashboard() {
           {/* Operations Menu */}
           <h3 style={{ marginBottom: "1rem" }}>System Operations</h3>
           <div className="nav-grid">
-            <Link to="/employees" className="nav-card">
-              <div>
-                <h3>Employee Profiles</h3>
-                <p>Register profile info, assign departments/skills, and perform global database searches.</p>
-              </div>
-              <div className="nav-card-action">Manage Employees &rarr;</div>
-            </Link>
+            {isApprover && (
+              <Link to="/employees" className="nav-card">
+                <div>
+                  <h3>Employee Profiles</h3>
+                  <p>Register profile info, assign departments/skills, and perform global database searches.</p>
+                </div>
+                <div className="nav-card-action">Manage Employees &rarr;</div>
+              </Link>
+            )}
 
             <Link to="/assets" className="nav-card">
               <div>
