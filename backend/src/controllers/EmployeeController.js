@@ -116,7 +116,7 @@ class EmployeeController {
 
   async getStats(req, res, next) {
     try {
-      const stats = await EmployeeService.getDashboardStats();
+      const stats = await EmployeeService.getDashboardStats(req.user);
       res.json(stats);
     } catch (err) {
       next(err);

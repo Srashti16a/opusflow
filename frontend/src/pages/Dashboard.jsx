@@ -95,129 +95,212 @@ function Dashboard() {
 
           {/* Stats Cards Grid */}
           <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-label">Total Employees</div>
-              <div className="stat-number">{statsLoading ? "..." : stats.employees}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Total Departments</div>
-              <div className="stat-number">{statsLoading ? "..." : stats.departments}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Total Skills</div>
-              <div className="stat-number">{statsLoading ? "..." : stats.skills}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Pending Leaves</div>
-              <div className="stat-number" style={{ color: stats.pendingLeaves > 0 ? "var(--warning)" : "inherit" }}>
-                {statsLoading ? "..." : stats.pendingLeaves}
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Approved Leaves</div>
-              <div className="stat-number" style={{ color: "var(--success)" }}>
-                {statsLoading ? "..." : stats.approvedLeaves}
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Rejected Leaves</div>
-              <div className="stat-number" style={{ color: "var(--danger)" }}>
-                {statsLoading ? "..." : stats.rejectedLeaves}
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Total Salary Expense</div>
-              <div className="stat-number">
-                {statsLoading ? "..." : `₹${Number(stats.totalSalary).toLocaleString("en-IN")}`}
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Corporate Assets</div>
-              <div className="stat-number">{statsLoading ? "..." : stats.assets}</div>
-            </div>
+            {isApprover ? (
+              <>
+                <div className="stat-card">
+                  <div className="stat-label">Total Employees</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.employees}</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Total Departments</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.departments}</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Total Skills</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.skills}</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Pending Leaves</div>
+                  <div className="stat-number" style={{ color: stats.pendingLeaves > 0 ? "var(--warning)" : "inherit" }}>
+                    {statsLoading ? "..." : stats.pendingLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Approved Leaves</div>
+                  <div className="stat-number" style={{ color: "var(--success)" }}>
+                    {statsLoading ? "..." : stats.approvedLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Rejected Leaves</div>
+                  <div className="stat-number" style={{ color: "var(--danger)" }}>
+                    {statsLoading ? "..." : stats.rejectedLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Total Salary Expense</div>
+                  <div className="stat-number">
+                    {statsLoading ? "..." : `₹${Number(stats.totalSalary).toLocaleString("en-IN")}`}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">Corporate Assets</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.assets}</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="stat-card">
+                  <div className="stat-label">My Skills Count</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.skills}</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">My Allocated Assets</div>
+                  <div className="stat-number">{statsLoading ? "..." : stats.assets}</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">My Pending Leaves</div>
+                  <div className="stat-number" style={{ color: stats.pendingLeaves > 0 ? "var(--warning)" : "inherit" }}>
+                    {statsLoading ? "..." : stats.pendingLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">My Approved Leaves</div>
+                  <div className="stat-number" style={{ color: "var(--success)" }}>
+                    {statsLoading ? "..." : stats.approvedLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">My Rejected Leaves</div>
+                  <div className="stat-number" style={{ color: "var(--danger)" }}>
+                    {statsLoading ? "..." : stats.rejectedLeaves}
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-label">My Monthly Salary</div>
+                  <div className="stat-number">
+                    {statsLoading ? "..." : stats.totalSalary > 0 ? `₹${Number(stats.totalSalary).toLocaleString("en-IN")}` : "N/A"}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Charts Row */}
           {!statsLoading && (
-            <div className="charts-grid">
-              {/* Pie Chart: Department Distribution */}
-              <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
-                <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Department Distribution</h4>
-                <div style={{ width: "100%", height: 300, position: "relative" }}>
-                  <ResponsiveContainer>
-                    <PieChart>
-                      <Pie
-                        data={stats.departmentStats.filter(d => d.value > 0)}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {stats.departmentStats.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
-                        itemStyle={{ color: "var(--text-primary)" }}
-                      />
-                      <Legend verticalAlign="bottom" height={36} formatter={(value, entry) => {
-                        const payload = entry.payload;
-                        return `${payload.name} (${payload.value})`;
-                      }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+            <div className="charts-grid" style={{ gridTemplateColumns: isApprover ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr" }}>
+              {isApprover ? (
+                <>
+                  {/* Pie Chart: Department Distribution */}
+                  <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
+                    <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Department Distribution</h4>
+                    <div style={{ width: "100%", height: 300, position: "relative" }}>
+                      <ResponsiveContainer>
+                        <PieChart>
+                          <Pie
+                            data={stats.departmentStats.filter(d => d.value > 0)}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="value"
+                          >
+                            {stats.departmentStats.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
+                            itemStyle={{ color: "var(--text-primary)" }}
+                          />
+                          <Legend verticalAlign="bottom" height={36} formatter={(value, entry) => {
+                            const payload = entry.payload;
+                            return `${payload.name} (${payload.value})`;
+                          }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
-              {/* Bar Chart: Asset Status */}
-              <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
-                <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Asset Stock Distribution</h4>
-                <div style={{ width: "100%", height: 300, position: "relative" }}>
-                  <ResponsiveContainer>
-                    <BarChart data={assetDistributionData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                      <XAxis dataKey="name" stroke="var(--text-muted)" />
-                      <YAxis stroke="var(--text-muted)" allowDecimals={false} />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
-                        itemStyle={{ color: "var(--text-primary)" }}
-                      />
-                      <Bar dataKey="count" fill="var(--primary)" radius={[4, 4, 0, 0]}>
-                        <Cell fill="var(--success)" />
-                        <Cell fill="var(--primary)" />
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+                  {/* Bar Chart: Asset Status */}
+                  <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
+                    <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Asset Stock Distribution</h4>
+                    <div style={{ width: "100%", height: 300, position: "relative" }}>
+                      <ResponsiveContainer>
+                        <BarChart data={assetDistributionData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                          <XAxis dataKey="name" stroke="var(--text-muted)" />
+                          <YAxis stroke="var(--text-muted)" allowDecimals={false} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
+                            itemStyle={{ color: "var(--text-primary)" }}
+                          />
+                          <Bar dataKey="count" fill="var(--primary)" radius={[4, 4, 0, 0]}>
+                            <Cell fill="var(--success)" />
+                            <Cell fill="var(--primary)" />
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
-              {/* Area Chart: Hiring Trend */}
-              <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
-                <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Monthly Hiring Trends</h4>
-                <div style={{ width: "100%", height: 300, position: "relative" }}>
-                  <ResponsiveContainer>
-                    <AreaChart data={hiringTrendData}>
-                      <defs>
-                        <linearGradient id="colorHires" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                      <XAxis dataKey="name" stroke="var(--text-muted)" />
-                      <YAxis stroke="var(--text-muted)" allowDecimals={false} />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
-                        itemStyle={{ color: "var(--text-primary)" }}
-                      />
-                      <Area type="monotone" dataKey="Hires" stroke="var(--primary)" fillOpacity={1} fill="url(#colorHires)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+                  {/* Area Chart: Hiring Trend */}
+                  <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
+                    <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Monthly Hiring Trends</h4>
+                    <div style={{ width: "100%", height: 300, position: "relative" }}>
+                      <ResponsiveContainer>
+                        <AreaChart data={hiringTrendData}>
+                          <defs>
+                            <linearGradient id="colorHires" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                          <XAxis dataKey="name" stroke="var(--text-muted)" />
+                          <YAxis stroke="var(--text-muted)" allowDecimals={false} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
+                            itemStyle={{ color: "var(--text-primary)" }}
+                          />
+                          <Area type="monotone" dataKey="Hires" stroke="var(--primary)" fillOpacity={1} fill="url(#colorHires)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Pie Chart: My Leave Applications Status */}
+                  <div className="glass-card" style={{ maxWidth: "500px", margin: "0 auto", padding: "1.5rem 2rem", width: "100%" }}>
+                    <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)", textAlign: "center" }}>My Leaves Status Distribution</h4>
+                    {stats.departmentStats && stats.departmentStats.some(d => d.value > 0) ? (
+                      <div style={{ width: "100%", height: 300, position: "relative" }}>
+                        <ResponsiveContainer>
+                          <PieChart>
+                            <Pie
+                              data={stats.departmentStats.filter(d => d.value > 0)}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={80}
+                              paddingAngle={5}
+                              dataKey="value"
+                            >
+                              {stats.departmentStats.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
+                              itemStyle={{ color: "var(--text-primary)" }}
+                            />
+                            <Legend verticalAlign="bottom" height={36} formatter={(value, entry) => {
+                              const payload = entry.payload;
+                              return `${payload.name} (${payload.value})`;
+                            }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: "0.95rem" }}>
+                        No leave requests submitted yet.
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 

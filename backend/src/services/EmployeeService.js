@@ -87,8 +87,12 @@ class EmployeeService {
     });
   }
 
-  async getDashboardStats() {
-    return EmployeeRepository.getDashboardStats();
+  async getDashboardStats(user) {
+    if (user && (user.role === "admin" || user.role === "manager" || user.role === "hr")) {
+      return EmployeeRepository.getDashboardStats();
+    } else {
+      return EmployeeRepository.getIndividualDashboardStats(user.id);
+    }
   }
 
   async getJoins() {

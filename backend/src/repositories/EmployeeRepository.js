@@ -236,6 +236,60 @@ class EmployeeRepository {
     };
   }
 
+  async getIndividualDashboardStats(userId) {
+    const profile = await prisma.employeeProfile.findFirst({
+      where: { userId: parseInt(userId) },
+      include: {
+        department: true,
+        employeeSkills: true,
+        leaveApplications: true,
+        assetAllocations: {
+          where: { status: "Allocated" }
+        }
+      }
+    });
+
+    if (!profile) {
+      return {
+        isIndividual: true,
+        employees: 0,
+        departments: 0,
+        skills: 0,
+        assets: 0,
+        allocatedAssets: 0,
+        pendingLeaves: 0,
+        approvedLeaves: 0,
+        rejectedLeaves: 0,
+        totalSalary: 0,
+        departmentStats: []
+      };
+    }
+
+    const skillsCount = profile.employeeSkills.length;
+    const allocatedAssetsCount = profile.assetAllocations.length;
+    const pendingCount = profile.leaveApplications.filter(l => l.status === "Pending").length;
+    const approvedCount = profile.leaveApplications.filter(l => l.status === "Approved").length;
+    const rejectedCount = profile.leaveApplications.filter(l => l.status === "Rejected").length;
+
+    return {
+      isIndividual: true,
+      employees: 1,
+      departments: profile.department ? 1 : 0,
+      skills: skillsCount,
+      assets: allocatedAssetsCount,
+      allocatedAssets: allocatedAssetsCount,
+      pendingLeaves: pendingCount,
+      approvedLeaves: approvedCount,
+      rejectedLeaves: rejectedCount,
+      totalSalary: Number(profile.salary || 0),
+      departmentStats: [
+        { name: "Pending", value: pendingCount },
+        { name: "Approved", value: approvedCount },
+        { name: "Rejected", value: rejectedCount }
+      ]
+    };
+  }
+
   async getJoinsRaw() {
     // Query 1: Employee + Department
     const join1 = await prisma.$queryRawUnsafe(`

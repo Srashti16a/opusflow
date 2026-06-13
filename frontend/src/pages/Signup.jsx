@@ -4,6 +4,7 @@ import api from "../services/api";
 
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -76,7 +77,7 @@ function Signup() {
             <label className="form-label" htmlFor="password">Password</label>
             <input
               className="input-field"
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               placeholder="••••••••"
@@ -84,6 +85,18 @@ function Signup() {
               onChange={handleChange}
               required
             />
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
+              <input
+                type="checkbox"
+                id="show-password"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                style={{ width: "auto", margin: 0 }}
+              />
+              <label htmlFor="show-password" style={{ fontSize: "0.85rem", color: "var(--text-secondary)", cursor: "pointer", userSelect: "none" }}>
+                Show Password
+              </label>
+            </div>
           </div>
 
           <button className="btn-primary" type="submit" disabled={loading}>
