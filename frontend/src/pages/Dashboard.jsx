@@ -197,7 +197,7 @@ function Dashboard() {
                               paddingAngle={5}
                               dataKey="value"
                             >
-                              {stats.departmentStats.map((entry, index) => (
+                              {stats.departmentStats.filter(d => d.value > 0).map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                               ))}
                             </Pie>
@@ -284,7 +284,7 @@ function Dashboard() {
                               paddingAngle={5}
                               dataKey="value"
                             >
-                              {stats.departmentStats.map((entry, index) => (
+                              {stats.departmentStats.filter(d => d.value > 0).map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                               ))}
                             </Pie>
