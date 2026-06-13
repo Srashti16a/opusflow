@@ -332,7 +332,7 @@ function ReportsPanel() {
           {/* Printable Report Wrapper */}
           <div className="print-area">
             <div style={{ display: "none" }} className="print-only">
-              <h1 style={{ color: "#000000", margin: "0 0 0.5rem 0" }}>eventhub360</h1>
+              <h1 style={{ color: "#000000", margin: "0 0 0.5rem 0" }}>OpusFlow</h1>
               <h3 style={{ color: "#333333", margin: "0 0 1.5rem 0" }}>{reportType} Consolidated Report</h3>
               <p style={{ fontSize: "0.85rem", color: "#666666", marginBottom: "2rem" }}>
                 Generated on: {new Date().toLocaleString()} by {user?.name || "System Administrator"}

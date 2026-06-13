@@ -4,9 +4,15 @@ class UserController {
   async signup(req, res, next) {
     try {
       const { name, email, password } = req.body;
-      const user = await UserService.signup(name, email, password);
+      const origin = req.headers.origin || req.get("origin");
+      const user = await UserService.signup(name, email, password, origin);
+      
+      const message = user.verified
+        ? "Registration successful! You can now log in."
+        : "Registration successful! Please check your email for the verification link.";
+
       res.status(201).json({
-        message: "Registration successful! Please check the server console for your email verification link.",
+        message,
         user: {
           id: user.id,
           name: user.name,

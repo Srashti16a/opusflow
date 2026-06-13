@@ -29,7 +29,7 @@ function Navbar() {
   return (
     <nav className="navbar no-print">
       <div className="navbar-brand-container">
-        <Link to="/dashboard" className="navbar-brand">eventhub360</Link>
+        <Link to="/dashboard" className="navbar-brand">OpusFlow</Link>
       </div>
 
       <div className="navbar-links">

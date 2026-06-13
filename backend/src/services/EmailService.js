@@ -42,7 +42,7 @@ Html: ${html || "N/A"}
 
     try {
       const info = await this.transporter.sendMail({
-        from: process.env.SMTP_FROM || '"eventhub360 ERP" <no-reply@eventhub360.com>',
+        from: process.env.SMTP_FROM || '"OpusFlow ERP" <no-reply@opusflow.com>',
         to,
         subject,
         text,
@@ -56,18 +56,37 @@ Html: ${html || "N/A"}
     }
   }
 
+  async sendVerificationEmail(email, name, token, frontendUrl) {
+    const verificationLink = `${frontendUrl}/verify/${token}`;
+    const subject = "Verify your email for OpusFlow";
+    const html = `
+      <div style="font-family: sans-serif; padding: 20px; line-height: 1.6;">
+        <h2>Welcome ${name}!</h2>
+        <p>We are excited to welcome you to <strong>OpusFlow</strong>.</p>
+        <p>Please verify your email using the link below:</p>
+        <p><a href="${verificationLink}" style="background: #7c3aed; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Verify Email</a></p>
+        <p>If the button doesn't work, copy and paste the following link into your browser:</p>
+        <p>${verificationLink}</p>
+        <br/>
+        <p>Best regards,<br/>OpusFlow Team</p>
+      </div>
+    `;
+    const text = `Welcome ${name}! Please verify your email using the link: ${verificationLink}`;
+    return this.sendMail({ to: email, subject, html, text });
+  }
+
   async sendWelcomeEmail(email, employeeName) {
-    const subject = "Welcome to eventhub360!";
+    const subject = "Welcome to OpusFlow!";
     const html = `
       <div style="font-family: sans-serif; padding: 20px; line-height: 1.6;">
         <h2>Welcome ${employeeName}!</h2>
-        <p>We are excited to welcome you to the team at <strong>eventhub360</strong>.</p>
+        <p>We are excited to welcome you to the team at <strong>OpusFlow</strong>.</p>
         <p>Your ERP portal account has been configured. You can now log in using your registered credentials to view your profile, apply for leaves, and track company assets.</p>
         <br/>
-        <p>Best regards,<br/>HR Team<br/>eventhub360</p>
+        <p>Best regards,<br/>HR Team<br/>OpusFlow</p>
       </div>
     `;
-    const text = `Welcome ${employeeName}! We are excited to welcome you to the team at eventhub360.`;
+    const text = `Welcome ${employeeName}! We are excited to welcome you to the team at OpusFlow.`;
     return this.sendMail({ to: email, subject, html, text });
   }
 
@@ -79,7 +98,7 @@ Html: ${html || "N/A"}
         <p>Your leave request for <strong>${leaveType}</strong> from <strong>${startDate}</strong> to <strong>${endDate}</strong> has been <strong>${status.toUpperCase()}</strong>.</p>
         <p>Please log in to the ERP portal to see details or contact your manager for questions.</p>
         <br/>
-        <p>Best regards,<br/>HR Team<br/>eventhub360</p>
+        <p>Best regards,<br/>HR Team<br/>OpusFlow</p>
       </div>
     `;
     const text = `Hello ${employeeName}, Your leave request for ${leaveType} from ${startDate} to ${endDate} has been ${status.toUpperCase()}.`;
@@ -95,7 +114,7 @@ Html: ${html || "N/A"}
         <p>This is to confirm that the asset <strong>${assetName} (${assetCode})</strong> has been successfully <strong>${isAllocation ? "allocated to you" : "returned by you"}</strong>.</p>
         <p>Please inspect the item and report any issues immediately to the IT support team.</p>
         <br/>
-        <p>Best regards,<br/>IT & Assets Dept<br/>eventhub360</p>
+        <p>Best regards,<br/>IT & Assets Dept<br/>OpusFlow</p>
       </div>
     `;
     const text = `Hello ${employeeName}, The asset ${assetName} (${assetCode}) has been ${isAllocation ? "allocated to you" : "returned by you"}.`;

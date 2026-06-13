@@ -34,6 +34,20 @@ function LeavePanel() {
   // Active view tab for managers: "apply" (standard view) or "approve" (approver view)
   const [viewTab, setViewTab] = useState(isApprover ? "approve" : "apply");
 
+  const [pendingPage, setPendingPage] = useState(1);
+  const [processedPage, setProcessedPage] = useState(1);
+  const [myRequestsPage, setMyRequestsPage] = useState(1);
+  const pageSize = 5;
+
+  const totalPendingPages = Math.ceil(pendingRequests.length / pageSize);
+  const paginatedPendingRequests = pendingRequests.slice((pendingPage - 1) * pageSize, pendingPage * pageSize);
+
+  const totalProcessedPages = Math.ceil(processedRequests.length / pageSize);
+  const paginatedProcessedRequests = processedRequests.slice((processedPage - 1) * pageSize, processedPage * pageSize);
+
+  const totalMyRequestsPages = Math.ceil(myRequests.length / pageSize);
+  const paginatedMyRequests = myRequests.slice((myRequestsPage - 1) * pageSize, myRequestsPage * pageSize);
+
   useEffect(() => {
     fetchData();
   }, [user, isApprover]);
@@ -46,6 +60,8 @@ function LeavePanel() {
       // Standard user fetches their requests
       const myRes = await api.get("/leaves/my-requests");
       setMyRequests(myRes.data);
+      const maxMyRequestsPage = Math.max(1, Math.ceil(myRes.data.length / pageSize));
+      setMyRequestsPage(prev => prev > maxMyRequestsPage ? maxMyRequestsPage : prev);
 
       // Approvers fetch pending and processed leaves
       if (isApprover) {
@@ -54,7 +70,12 @@ function LeavePanel() {
           api.get("/leaves/history")
         ]);
         setPendingRequests(pendingRes.data);
+        const maxPendingPage = Math.max(1, Math.ceil(pendingRes.data.length / pageSize));
+        setPendingPage(prev => prev > maxPendingPage ? maxPendingPage : prev);
+
         setProcessedRequests(historyRes.data);
+        const maxProcessedPage = Math.max(1, Math.ceil(historyRes.data.length / pageSize));
+        setProcessedPage(prev => prev > maxProcessedPage ? maxProcessedPage : prev);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load leave request data");
@@ -219,14 +240,14 @@ function LeavePanel() {
                         </tr>
                       </thead>
                       <tbody>
-                        {pendingRequests.length === 0 ? (
+                        {paginatedPendingRequests.length === 0 ? (
                           <tr>
                             <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)", padding: "3rem" }}>
                               No pending leave applications. Queue is clear!
                             </td>
                           </tr>
                         ) : (
-                          pendingRequests.map((req) => (
+                          paginatedPendingRequests.map((req) => (
                             <tr key={req.id}>
                               <td>
                                 <strong>{req.employeeProfile?.user?.name || "Unknown"}</strong>
@@ -266,6 +287,33 @@ function LeavePanel() {
                     </table>
                   </div>
 
+                  {totalPendingPages > 1 && (
+                    <div style={{
+                      display: "flex", justifyContent: "flex-end", alignItems: "center",
+                      marginTop: "1rem", marginBottom: "1.5rem", gap: "0.5rem"
+                    }}>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={pendingPage <= 1}
+                        onClick={() => setPendingPage(pendingPage - 1)}
+                      >
+                        Previous
+                      </button>
+                      <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                        Page {pendingPage} of {totalPendingPages}
+                      </span>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={pendingPage >= totalPendingPages}
+                        onClick={() => setPendingPage(pendingPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+
                   {/* History processed approvals table */}
                   <h3 style={{ marginTop: "3rem" }}>Processed Approvals History</h3>
                   <div className="table-wrapper">
@@ -281,14 +329,14 @@ function LeavePanel() {
                         </tr>
                       </thead>
                       <tbody>
-                        {processedRequests.length === 0 ? (
+                        {paginatedProcessedRequests.length === 0 ? (
                           <tr>
                             <td colSpan="6" style={{ textAlign: "center", color: "var(--text-muted)", padding: "3rem" }}>
                               No leave history records found.
                             </td>
                           </tr>
                         ) : (
-                          processedRequests.map((req) => (
+                          paginatedProcessedRequests.map((req) => (
                             <tr key={req.id}>
                               <td>
                                 <strong>{req.employeeProfile?.user?.name || "Unknown"}</strong>
@@ -321,6 +369,33 @@ function LeavePanel() {
                       </tbody>
                     </table>
                   </div>
+
+                  {totalProcessedPages > 1 && (
+                    <div style={{
+                      display: "flex", justifyContent: "flex-end", alignItems: "center",
+                      marginTop: "1rem", gap: "0.5rem"
+                    }}>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={processedPage <= 1}
+                        onClick={() => setProcessedPage(processedPage - 1)}
+                      >
+                        Previous
+                      </button>
+                      <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                        Page {processedPage} of {totalProcessedPages}
+                      </span>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={processedPage >= totalProcessedPages}
+                        onClick={() => setProcessedPage(processedPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -414,14 +489,14 @@ function LeavePanel() {
                           </tr>
                         </thead>
                         <tbody>
-                          {myRequests.length === 0 ? (
+                          {paginatedMyRequests.length === 0 ? (
                             <tr>
                               <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)", padding: "3rem" }}>
                                 You have not submitted any leave applications. Apply on the left.
                               </td>
                             </tr>
                           ) : (
-                            myRequests.map((req) => (
+                            paginatedMyRequests.map((req) => (
                               <tr key={req.id}>
                                 <td><strong>{req.leaveType}</strong></td>
                                 <td>{new Date(req.startDate).toLocaleDateString()}</td>
@@ -462,6 +537,32 @@ function LeavePanel() {
                         </tbody>
                       </table>
                     </div>
+                    {totalMyRequestsPages > 1 && (
+                      <div style={{
+                        display: "flex", justifyContent: "flex-end", alignItems: "center",
+                        marginTop: "1rem", gap: "0.5rem"
+                      }}>
+                        <button
+                          className="btn-secondary"
+                          style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                          disabled={myRequestsPage <= 1}
+                          onClick={() => setMyRequestsPage(myRequestsPage - 1)}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                          Page {myRequestsPage} of {totalMyRequestsPages}
+                        </span>
+                        <button
+                          className="btn-secondary"
+                          style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                          disabled={myRequestsPage >= totalMyRequestsPages}
+                          onClick={() => setMyRequestsPage(myRequestsPage + 1)}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

@@ -1,17 +1,17 @@
-# Slide Presentation Outline - eventhub360
+# Slide Presentation Outline - OpusFlow
 
 This document outlines the slide-by-slide structure, core content, and speaker talking points for the Project Presentation.
 
 ---
 
 ## Slide 1: Cover Page / Title Slide
-- **Title:** EventHub 360 Enterprise Portal
+- **Title:** OpusFlow Enterprise Portal
 - **Subtitle:** Streamlining Corporate Workflows, Asset Inventory, Leaves and Logging
 - **Presenter:** Srashti
-- **Organization:** eventhub360
+- **Organization:** OpusFlow
 - **Talking Points:**
   - Introduce yourself and state the purpose of the presentation.
-  - Explain that EventHub 360 is a full-stack unified dashboard resolving typical back-office workflow challenges (employees, leaves, physical inventory, telemetry checks).
+  - Explain that OpusFlow is a full-stack unified dashboard resolving typical back-office workflow challenges (employees, leaves, physical inventory, telemetry checks).
 
 ---
 
@@ -102,4 +102,4 @@ This document outlines the slide-by-slide structure, core content, and speaker t
   - Gained hands-on experience designing robust database entities.
   - Learned troubleshooting practices for deployment configurations and CORS.
 - **Conclusion:**
-  - EventHub 360 is live, fully documented, and ready for use!
+  - OpusFlow is live, fully documented, and ready for use!

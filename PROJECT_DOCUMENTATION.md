@@ -1,4 +1,4 @@
-# Technical Project Documentation - eventhub360
+# Technical Project Documentation - OpusFlow
 
 This document outlines the detailed system architecture, module definitions, database design schema, API endpoints catalog, deployment configurations, and verification guide.
 
@@ -6,7 +6,7 @@ This document outlines the detailed system architecture, module definitions, dat
 
 ## 1. Project Overview
 
-eventhub360 is an enterprise employee profile register and operations tracking software. It manages employee files, corporate assets inventory, leaves approvals queue, system diagnostic telemetry, and immutable transaction audit logs.
+OpusFlow is an enterprise employee profile register and operations tracking software. It manages employee files, corporate assets inventory, leaves approvals queue, system diagnostic telemetry, and immutable transaction audit logs.
 
 ### Key Modules
 1. **User Authentication & Role-Based Control:** Verification link mail simulation, JWT authorization, profile inspection, and customized navigation menu visibility (Admin, Manager, HR, and Employee).

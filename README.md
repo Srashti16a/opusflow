@@ -1,4 +1,4 @@
-# eventhub360 - Employee & Asset Management System
+# OpusFlow - Employee & Asset Management System
 
 A unified enterprise workflow management portal built to streamline employee profiles registry, leaves queue approvals, corporate asset inventories allocation, audit logging, and high-performance SaaS reporting.
 
@@ -75,7 +75,7 @@ A unified enterprise workflow management portal built to streamline employee pro
 
 ## Deployment URLs
 
-- **Live Frontend URL:** `https://eventhub360-srashti.vercel.app`
+- **Live Frontend URL:** `https://opusflow-srashti.vercel.app`
 - **Live Backend API URL:** `https://eventhub360-kbam.onrender.com`
 - **Cloud Database:** Hosted on Neon PostgreSQL.
 
@@ -84,4 +84,4 @@ A unified enterprise workflow management portal built to streamline employee pro
 ## Credits
 
 - **Developer Name:** Srashti
-- **Organization:** eventhub360
+- **Organization:** OpusFlow

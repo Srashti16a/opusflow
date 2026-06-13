@@ -90,7 +90,7 @@ function Dashboard() {
         <div style={{ textAlign: "left" }}>
           <h2>Enterprise Portal Dashboard</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
-            Welcome to the eventhub360 unified workflow, asset inventory, and reporting control system.
+            Welcome to the OpusFlow unified workflow, asset inventory, and reporting control system.
           </p>
 
           {/* Stats Cards Grid */}

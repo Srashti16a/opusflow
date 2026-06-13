@@ -10,6 +10,12 @@ function DepartmentMaster() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
+  const totalPages = Math.ceil(departments.length / pageSize);
+  const paginatedDepts = departments.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   useEffect(() => {
     fetchDepartments();
   }, []);
@@ -19,6 +25,8 @@ function DepartmentMaster() {
       setLoading(true);
       const res = await api.get("/departments");
       setDepartments(res.data);
+      const maxPage = Math.max(1, Math.ceil(res.data.length / pageSize));
+      setCurrentPage(prev => prev > maxPage ? maxPage : prev);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load departments");
     } finally {
@@ -92,32 +100,61 @@ function DepartmentMaster() {
                   Loading departments...
                 </div>
               ) : (
-                <div className="table-wrapper">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th style={{ width: "80px" }}>ID</th>
-                        <th>Department Name</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {departments.length === 0 ? (
+                <>
+                  <div className="table-wrapper">
+                    <table>
+                      <thead>
                         <tr>
-                          <td colSpan="2" style={{ textAlign: "center", color: "var(--text-muted)" }}>
-                            No departments found. Add one on the left.
-                          </td>
+                          <th style={{ width: "80px" }}>ID</th>
+                          <th>Department Name</th>
                         </tr>
-                      ) : (
-                        departments.map((d) => (
-                          <tr key={d.id}>
-                            <td>{d.id}</td>
-                            <td><strong>{d.department_name}</strong></td>
+                      </thead>
+                      <tbody>
+                        {paginatedDepts.length === 0 ? (
+                          <tr>
+                            <td colSpan="2" style={{ textAlign: "center", color: "var(--text-muted)" }}>
+                              No departments found. Add one on the left.
+                            </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                        ) : (
+                          paginatedDepts.map((d) => (
+                            <tr key={d.id}>
+                              <td>{d.id}</td>
+                              <td><strong>{d.department_name}</strong></td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div style={{
+                      display: "flex", justifyContent: "flex-end", alignItems: "center",
+                      marginTop: "1rem", gap: "0.5rem"
+                    }}>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={currentPage <= 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                      >
+                        Previous
+                      </button>
+                      <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <button
+                        className="btn-secondary"
+                        style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                        disabled={currentPage >= totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -9,6 +9,12 @@ function AdminDashboard() {
   const [success, setSuccess] = useState(null);
   const [health, setHealth] = useState(null);
   const [healthLoading, setHealthLoading] = useState(true);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
+  const totalPages = Math.ceil(users.length / pageSize);
+  const paginatedUsers = users.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {
     fetchUsers();
@@ -62,7 +68,12 @@ function AdminDashboard() {
       const res = await api.delete(`/user/admin/users/${id}`);
       setSuccess(res.data.message);
       // Filter out deleted user
-      setUsers(users.filter(u => u.id !== id));
+      const updatedUsers = users.filter(u => u.id !== id);
+      setUsers(updatedUsers);
+      const maxPage = Math.max(1, Math.ceil(updatedUsers.length / pageSize));
+      if (currentPage > maxPage) {
+        setCurrentPage(maxPage);
+      }
       // Re-fetch health to update registered user count metric
       fetchHealth();
     } catch (err) {
@@ -184,61 +195,92 @@ function AdminDashboard() {
               Retrieving users list...
             </div>
           ) : (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email Address</th>
-                    <th>Role</th>
-                    <th>Verified</th>
-                    <th>Registered Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.length === 0 ? (
+            <>
+              <div className="table-wrapper">
+                <table>
+                  <thead>
                     <tr>
-                      <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)" }}>
-                        No user accounts registered.
-                      </td>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email Address</th>
+                      <th>Role</th>
+                      <th>Verified</th>
+                      <th>Registered Date</th>
+                      <th>Action</th>
                     </tr>
-                  ) : (
-                    users.map((u) => (
-                      <tr key={u.id}>
-                        <td>{u.id}</td>
-                        <td><strong>{u.name}</strong></td>
-                        <td>{u.email}</td>
-                        <td>
-                          <span className={`badge badge-${u.role}`}>{u.role}</span>
-                        </td>
-                        <td>
-                          <span 
-                            style={{ 
-                              color: u.verified ? "var(--success)" : "var(--danger)",
-                              fontWeight: "600"
-                            }}
-                          >
-                            {u.verified ? "Yes" : "No"}
-                          </span>
-                        </td>
-                        <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                        <td>
-                          <button 
-                            className="btn-danger" 
-                            style={{ margin: 0, width: "auto" }}
-                            onClick={() => handleDeleteUser(u.id, u.name)}
-                          >
-                            Delete
-                          </button>
+                  </thead>
+                  <tbody>
+                    {paginatedUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" style={{ textAlign: "center", color: "var(--text-muted)" }}>
+                          No user accounts registered.
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ) : (
+                      paginatedUsers.map((u) => (
+                        <tr key={u.id}>
+                          <td>{u.id}</td>
+                          <td><strong>{u.name}</strong></td>
+                          <td>{u.email}</td>
+                          <td>
+                            <span className={`badge badge-${u.role}`}>{u.role}</span>
+                          </td>
+                          <td>
+                            <span 
+                              style={{ 
+                                color: u.verified ? "var(--success)" : "var(--danger)",
+                                fontWeight: "600"
+                              }}
+                            >
+                              {u.verified ? "Yes" : "No"}
+                            </span>
+                          </td>
+                          <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                          <td>
+                            <button 
+                              className="btn-danger" 
+                              style={{ margin: 0, width: "auto" }}
+                              onClick={() => handleDeleteUser(u.id, u.name)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {totalPages > 1 && (
+                <div style={{
+                  display: "flex", justifyContent: "flex-end", alignItems: "center",
+                  marginTop: "1.5rem", gap: "0.5rem"
+                }}>
+                  <button
+                    className="btn-secondary"
+                    style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                    disabled={currentPage <= 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                  >
+                    Previous
+                  </button>
+                  
+                  <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    className="btn-secondary"
+                    style={{ margin: 0, padding: "0.3rem 0.75rem", fontSize: "0.85rem", width: "auto" }}
+                    disabled={currentPage >= totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

@@ -23,7 +23,7 @@ function Landing() {
               </linearGradient>
             </defs>
           </svg>
-          <span className="logo-text">eventhub360</span>
+          <span className="logo-text">OpusFlow</span>
         </div>
         <div className="landing-auth-buttons">
           <Link to="/login" className="btn-landing-login">Sign In</Link>
@@ -35,7 +35,7 @@ function Landing() {
       <main className="landing-hero-section">
         <div className="landing-hero-content">
           <div className="badge-promo">
-            ✨ Introducing eventhub360 Enterprise
+            ✨ Introducing OpusFlow Enterprise
           </div>
           <h1 className="hero-title">
             The Smart, Unified <br />
@@ -178,7 +178,7 @@ function Landing() {
 
       {/* Footer */}
       <footer className="landing-footer">
-        <p>&copy; {new Date().getFullYear()} eventhub360. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} OpusFlow. All rights reserved.</p>
       </footer>
     </div>
   );

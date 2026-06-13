@@ -33,7 +33,7 @@ function VerifyEmail() {
     <div className="auth-container">
       <div className="glass-card" style={{ textAlign: "center" }}>
         <div style={{ fontSize: "1.75rem", fontWeight: "800", background: "linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem", fontFamily: "'Outfit', sans-serif" }}>
-          eventhub360
+          OpusFlow
         </div>
         <h2>Email Verification</h2>
         <div style={{ margin: "1.5rem 0" }}>

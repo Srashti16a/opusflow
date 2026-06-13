@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const UserRepository = require("../repositories/UserRepository");
+const EmailService = require("./EmailService");
+
 
 function getRoleByEmail(email) {
   const normalized = email.toLowerCase().trim();
@@ -11,7 +13,7 @@ function getRoleByEmail(email) {
 }
 
 class UserService {
-  async signup(name, email, password) {
+  async signup(name, email, password, origin) {
     const userExist = await UserRepository.findByEmail(email);
     if (userExist) {
       const error = new Error("Email already exists");
@@ -24,23 +26,28 @@ class UserService {
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const role = getRoleByEmail(email);
 
+    // If SMTP is mock/not configured, auto-verify user for seamless flow
+    const useMock = EmailService.useMock;
+    const verified = useMock ? true : false;
+
     const newUser = await UserRepository.createUser({
       name,
       email,
       password: hashedPassword,
       role,
-      verified: false,
-      verificationToken
+      verified,
+      verificationToken: verified ? null : verificationToken
     });
 
-    // Log verification link
-    const verificationLink = `http://localhost:5173/verify/${verificationToken}`;
-    console.log(`\n========================================`);
-    console.log(`✉️  EMAIL SENT TO: ${email}`);
-    console.log(`Welcome to eventhub360, ${name}!`);
-    console.log(`Please verify your email using the link below:`);
-    console.log(`${verificationLink}`);
-    console.log(`========================================\n`);
+    const frontendUrl = origin || process.env.FRONTEND_URL || "http://localhost:5173";
+
+    if (!verified) {
+      // Send verification email
+      await EmailService.sendVerificationEmail(email, name, verificationToken, frontendUrl);
+    } else {
+      // If auto-verified, send welcome email
+      await EmailService.sendWelcomeEmail(email, name);
+    }
 
     return newUser;
   }
