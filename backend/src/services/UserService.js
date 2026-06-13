@@ -14,7 +14,8 @@ function getRoleByEmail(email) {
 
 class UserService {
   async signup(name, email, password, origin) {
-    const userExist = await UserRepository.findByEmail(email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const userExist = await UserRepository.findByEmail(normalizedEmail);
     if (userExist) {
       const error = new Error("Email already exists");
       error.statusCode = 400;
@@ -32,7 +33,7 @@ class UserService {
 
     const newUser = await UserRepository.createUser({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       role,
       verified,
@@ -44,10 +45,10 @@ class UserService {
     try {
       if (!verified) {
         // Send verification email
-        await EmailService.sendVerificationEmail(email, name, verificationToken, frontendUrl);
+        await EmailService.sendVerificationEmail(normalizedEmail, name, verificationToken, frontendUrl);
       } else {
         // If auto-verified, send welcome email
-        await EmailService.sendWelcomeEmail(email, name);
+        await EmailService.sendWelcomeEmail(normalizedEmail, name);
       }
     } catch (mailErr) {
       // If email sending fails, log it and fallback to auto-verifying the user
@@ -84,7 +85,8 @@ class UserService {
   }
 
   async login(email, password) {
-    const user = await UserRepository.findByEmail(email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await UserRepository.findByEmail(normalizedEmail);
     if (!user) {
       const error = new Error("Invalid email or password");
       error.statusCode = 400;
@@ -167,7 +169,8 @@ class UserService {
   }
 
   async forgotPassword(email) {
-    const user = await UserRepository.findByEmail(email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await UserRepository.findByEmail(normalizedEmail);
     if (!user) {
       return { message: "If that email exists in our database, a password reset link has been logged to the console." };
     }
@@ -183,7 +186,7 @@ class UserService {
 
     const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
     console.log(`\n========================================`);
-    console.log(`✉️  PASSWORD RESET EMAIL FOR: ${email}`);
+    console.log(`✉️  PASSWORD RESET EMAIL FOR: ${normalizedEmail}`);
     console.log(`Click the link below to reset your password (valid for 15 minutes):`);
     console.log(`${resetLink}`);
     console.log(`========================================\n`);
