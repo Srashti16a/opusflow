@@ -41,12 +41,27 @@ class UserService {
 
     const frontendUrl = origin || process.env.FRONTEND_URL || "http://localhost:5173";
 
-    if (!verified) {
-      // Send verification email
-      await EmailService.sendVerificationEmail(email, name, verificationToken, frontendUrl);
-    } else {
-      // If auto-verified, send welcome email
-      await EmailService.sendWelcomeEmail(email, name);
+    try {
+      if (!verified) {
+        // Send verification email
+        await EmailService.sendVerificationEmail(email, name, verificationToken, frontendUrl);
+      } else {
+        // If auto-verified, send welcome email
+        await EmailService.sendWelcomeEmail(email, name);
+      }
+    } catch (mailErr) {
+      // If email sending fails, log it and fallback to auto-verifying the user
+      // so they can still log in and are not locked out of their account.
+      const logger = require("../utils/logger");
+      logger.error("Signup email transmission failed. Falling back to auto-verifying user:", mailErr);
+      
+      if (!verified) {
+        await UserRepository.updateUser(newUser.id, {
+          verified: true,
+          verificationToken: null
+        });
+        newUser.verified = true;
+      }
     }
 
     return newUser;
