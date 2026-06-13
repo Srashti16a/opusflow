@@ -184,33 +184,39 @@ function Dashboard() {
                   {/* Pie Chart: Department Distribution */}
                   <div className="glass-card" style={{ maxWidth: "100%", padding: "1.5rem 2rem" }}>
                     <h4 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Department Distribution</h4>
-                    <div style={{ width: "100%", height: 300, position: "relative" }}>
-                      <ResponsiveContainer>
-                        <PieChart>
-                          <Pie
-                            data={stats.departmentStats.filter(d => d.value > 0)}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={60}
-                            outerRadius={80}
-                            paddingAngle={5}
-                            dataKey="value"
-                          >
-                            {stats.departmentStats.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
-                            itemStyle={{ color: "var(--text-primary)" }}
-                          />
-                          <Legend verticalAlign="bottom" height={36} formatter={(value, entry) => {
-                            const payload = entry.payload;
-                            return `${payload.name} (${payload.value})`;
-                          }} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
+                    {stats.departmentStats && stats.departmentStats.some(d => d.value > 0) ? (
+                      <div style={{ width: "100%", height: 300, position: "relative" }}>
+                        <ResponsiveContainer>
+                          <PieChart>
+                            <Pie
+                              data={stats.departmentStats.filter(d => d.value > 0)}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={80}
+                              paddingAngle={5}
+                              dataKey="value"
+                            >
+                              {stats.departmentStats.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-glass)" }}
+                              itemStyle={{ color: "var(--text-primary)" }}
+                            />
+                            <Legend verticalAlign="bottom" height={36} formatter={(value, entry) => {
+                              const payload = entry.payload;
+                              return `${payload.name} (${payload.value})`;
+                            }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: "0.95rem", textAlign: "center" }}>
+                        No employee department distribution data available. Register and link employees to departments to view the chart.
+                      </div>
+                    )}
                   </div>
 
                   {/* Bar Chart: Asset Status */}
