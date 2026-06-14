@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure } from "../redux/authSlice";
 import api from "../services/api";
+import ThemeToggle from "../components/ThemeToggle";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -39,7 +40,10 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ position: "relative" }}>
+      <div style={{ position: "absolute", top: "1.5rem", right: "1.5rem", zIndex: 10 }}>
+        <ThemeToggle />
+      </div>
       <div className="glass-card">
         <div style={{ fontSize: "1.75rem", fontWeight: "800", background: "linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem", fontFamily: "'Outfit', sans-serif", textAlign: "center" }}>
           OpusFlow

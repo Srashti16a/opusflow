@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/authSlice";
 import api from "../services/api";
 import NotificationDropdown from "./NotificationDropdown";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ function Navbar() {
       </div>
 
       <div className="navbar-user">
+        <ThemeToggle />
         <NotificationDropdown />
         
         {isAdmin && (

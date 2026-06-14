@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ThemeToggle from "../components/ThemeToggle";
 
 function Landing() {
   return (
@@ -25,7 +26,8 @@ function Landing() {
           </svg>
           <span className="logo-text">OpusFlow</span>
         </div>
-        <div className="landing-auth-buttons">
+        <div className="landing-auth-buttons" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <ThemeToggle />
           <Link to="/login" className="btn-landing-login">Sign In</Link>
           <Link to="/signup" className="btn-landing-signup">Sign Up</Link>
         </div>

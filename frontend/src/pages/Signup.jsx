@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import ThemeToggle from "../components/ThemeToggle";
 
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -31,7 +32,10 @@ function Signup() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ position: "relative" }}>
+      <div style={{ position: "absolute", top: "1.5rem", right: "1.5rem", zIndex: 10 }}>
+        <ThemeToggle />
+      </div>
       <div className="glass-card">
         <div style={{ fontSize: "1.75rem", fontWeight: "800", background: "linear-gradient(135deg, #a78bfa 0%, var(--primary) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem", fontFamily: "'Outfit', sans-serif", textAlign: "center" }}>
           OpusFlow
